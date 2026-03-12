@@ -1,0 +1,29 @@
+version: 2.1
+
+jobs:
+  build-deploy:
+    docker:
+      - image: cimg/aws:2023.04.1
+    steps:
+      - checkout
+      - run:
+          name: Lets deploy thsi application
+          command: |
+            ls
+            aws s3 sync . s3://travel.techtrendhub.cloudns.ph/
+
+workflows:
+  build-and-deploy:
+    jobs:
+      - request-deploy:
+          type: approval
+          filters:
+            branches:
+              only: main
+
+      - build-deploy:
+          requires:
+            - request-deploy
+          filters:
+            branches:
+              only: main
